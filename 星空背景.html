@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		body{
+			background-color: #000;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+	
+		//创建canvas对象
+		var canvas = document.createElement('canvas');
+		canvas.id = 'canvas';
+		//挂载canvas
+		document.body.appendChild(canvas);
+		canvas.height = window.innerHeight;
+		canvas.width = window.innerWidth;
+		//创建canvas 的context对象
+		var ctx = canvas.getContext('2d');
+
+	/*
+		//画矩形 (x,y,width,height)
+		ctx.fillStyle = 'red';
+		ctx.fillRect(canvas.width/2-75,canvas.height/2-25,150,50);
+
+		//划线
+		ctx.moveTo(50,50);
+		ctx.lineTo(400,305);
+		ctx.strokeStyle = 'red';
+		ctx.stroke();
+*/
+		//画圆形 （x,y,r,start,stop）
+		ctx.strokeStyle = 'yellow';
+		ctx.beginPath();
+		ctx.arc(300,150,40,0,2*Math.PI);
+		ctx.stroke();
+/*
+		//写字
+		ctx.fillStyle = 'blue';
+		ctx.font="30px Arial";
+		ctx.fillText("Hello World",800,200);
+
+		//写空心字
+		ctx.strokeStyle = 'pink';
+		ctx.font="30px Arial";
+		ctx.strokeText("Hello World",800,200);
+
+		ctx.strokeRect(canvas.width/2,canvas.height/2-25,150,50);
+
+		// 创建线性渐变 (右端点的y值，开始渐变的点，左端点的y值，)
+		var grd=ctx.createLinearGradient(6,90,5,100);
+		grd.addColorStop(0,"red");
+		grd.addColorStop(1,"white");
+	 
+		// 填充渐变 
+		ctx.fillStyle=grd;
+		ctx.fillRect(0,0,0,0);
+
+		function put(event){
+			x = event.x;
+			y = event.y;
+			console.log(x,y)
+		}
+		canvas.onmousemove = this.put;
+		*/
+
+		//画星星
+		var colorLine = 'rgba(45,140,210,0.2)';
+		var colorDot = 'rgba(45,140,210,0.2)';
+		var circleArr = [];
+		var stars = 5;
+		ctx.strokeStyle = colorLine;
+		ctx.lineWidth = 1;
+		ctx.fillStyle = colorDot;
+
+		createCircleArr();
+		draw();
+		window.setInterval(cycleDraw,20);
+
+
+		function drawCircle(x,y,r,moveX,moveY){
+			ctx.beginPath();
+			let circle = {
+				x:x,
+				y:y,
+				r:r,
+				moveX:moveX,
+				moveY:moveY
+			} 
+			ctx.arc(x,y,r,0,Math.PI*2,false);
+			ctx.closePath();
+			ctx.fill();
+			return circle;
+		}
+		function drawLine(x,y,endX,endY){
+			ctx.beginPath();
+			ctx.moveTo(x,y);
+			ctx.lineTo(endX,endY);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		function createCircleArr(){
+			for(let i = 0;i < stars; i++)
+			{
+				let x = Math.random()*innerWidth;
+				let y = Math.random()*innerHeight;
+				let r = Math.random()*5+1;
+				let moveX = Math.random(10,-10);
+				let moveY = Math.random(10,-10);
+				console.log(x,y,r)
+				circleArr.push(this.drawCircle(x,y,r,moveX,moveY));
+			}
+		}
+		function draw(){
+			ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+			for(let i=0;i<stars;i++) {
+				let {x,y,r,moveX,moveY} = circleArr[i];
+				drawCircle(x,y,r,moveX,moveY);
+			}
+			for(let i=0;i<stars;i++) {
+
+				for(let j=i+1;j<stars;j++) {
+			//			let A = Math.abs(circleArr[i + j].x - circleArr[i].x)
+		    //           let B = Math.abs(circleArr[i + j].y - circleArr[i].y)
+		    //           let lineLength = Math.sqrt(A * A + B * B)
+		    //           let C = 1 / lineLength * 7 - 0.009
+		    //           let lineOpacity = C > 0.03 ? 0.03 : C;
+		    //           if (lineOpacity > 0) {
+		    //             this.drawLine(
+		    //               circleArr[i].x,
+		    //               circleArr[i].y,
+		    //               circleArr[i + j].x,
+		    //               circleArr[i + j].y
+		    //             )
+		    //           }
+		     	this.drawLine(
+		                  circleArr[i].x,
+		                  circleArr[i].y,
+		                  circleArr[j].x,
+		                  circleArr[j].y
+		                  )
+					
+				}
+			}
+		}
+			function cycleDraw() {
+	          for(let i = 0; i < stars; i++) {
+	            let cir = this.circleArr[i]
+	            cir.moveX = (cir.x + cir.moveX > innerWidth || cir.x <= 0) ? cir.moveX*-1 : cir.moveX;
+	            cir.moveY = (cir.y + cir.moveY > innerHeight || cir.y <= 0) ? cir.moveY*-1 : cir.moveY;
+	            cir.x += cir.moveX
+	            cir.y += cir.moveY
+	            }
+	          this.draw();
+	      }
+</script>
+</body>
+</html>

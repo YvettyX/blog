@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>-</title>
+	<style type="text/css">
+		#main{
+			height: 300px;	width: 300px;
+			background-color: #999;
+			/* 1.一种垂直居中的方式 */
+			/*text-align:center;
+			vertical-align: middle;
+			display: table-cell;*/
+
+			/* 3.使用flex将其定义为弹性容器，再使用align-items设置纵轴对其方式，justify-content设置主轴上的对齐方式 */
+			display: flex; 
+			justify-content: center;
+			align-items: center;
+		}
+		#main p{
+			/* 2.使用absolute和transform */
+			/*position:absolute;
+			left: 50%; top: 50%;
+			transform: translate(-50%,-50%);*/	
+		}
+	</style>
+	<script type="text/javascript">
+	//节流，设置一个阈值，可以将一个方法的调用频率限制在一定的阈值内，防止短时间内多次调用
+	//时间戳
+	function throttleDate(opt,fn,wait){
+		var prev = new Date();
+		return function(){
+			var now = new Date();
+			if(now - prev > wait){
+				fn.apply(opt,arguments);
+				prev = new Date();
+			}
+		}
+	}
+	//定时器
+	function throttleTimeout(){
+		return function(){
+			if(!_this.timer){
+				_this.timer = setTimeout(() => {
+					_this.timer = null;
+					_fn.apply(opt,arguments);
+				}, wait);
+			}
+		}
+	}
+
+
+	//防抖,当一次事件触发后，事件处理器要等一定阈值的时间，如果这段时间过去后，再也没有事件发生，就处理最后一次发生的事件。
+		function debounceNoImmediate(opt,fn,wait) {
+			var _this = this;
+			return function(){
+				if(_this.timer) clearTimeout(timer);
+				_this.timer = setTimeout(() => {
+					fn.apply(opt,arguments);
+				},wait);
+		}
+	}
+	//立即执行版
+	function debounceImmediate(opt,fn,wait){
+		var _this = this;
+		return function(){
+			if(_this.timer) clearTimeout(_this.timer);
+			var immediate = !_this.timer;
+			_this.timer = setTimeout(() => {
+				_this.timer = null;
+			},wait)
+			if(immediate) fn.apply(opt,arguments);
+		}
+	}
+	//双剑合璧
+	function debounce(opt,fn,wait,immediate){
+		var _this = this;
+		return function(){
+			if(_this.timer) clearTimeout(_this.timer);
+			if(immediate) {
+				var callNow = !_this.timer;
+				_this.timer = setTimeout(() => {
+					_this.timer = null;
+				}, wait)
+				if(callNow) fn.apply(opt,arguments);
+			}
+			else{
+				_this.timer = setTimeout(() => {
+					fn.apply(opt,arguments);
+				}, wait);
+			}
+		}
+	}
+
+	</script>
+
+</head>
+<body>
+	<div id="main">
+	</div>
+	<script type="text/javascript">
+	var num = 0;
+	var main = document.getElementById("main");
+	let node = document.createElement("p");
+	node.innerHTML = num;
+	main.appendChild(node);
+	var p = main.getElementsByTagName("p")[0];
+
+	function setter(){
+		p.innerHTML = num++;
+		console.log(num)
+	}
+
+	main.onmousemove = throttle(this,this.setter,3000);
+	</script>
+</body>
+</html>

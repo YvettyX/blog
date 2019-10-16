@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: #666;
+        }
+    </style>
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body>
+    <script type="text/javascript">
+        //找到canvas对象
+        var canvas = document.createElement('canvas');
+        canvas.id='canvas';
+        //将canvas对象添加进body
+        document.body.appendChild(canvas);
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        //创建context对象————是内建的HTML5对象，拥有多种绘制路径、矩形、原型、字符以及添加图像的方法
+        let ctx = canvas.getContext('2d');
+
+        let mouse = {
+            x: undefined,
+            y: undefined,
+        }
+
+        var colors = ['#F9F980','#FCF5C7','#fff'];
+        var circles = [];
+
+        //根据监听的事件得到鼠标滑动的位置
+        function handler(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+            console.log(mouse);
+
+        };
+        
+        
+        window.addEventListener('mousemove',handler)
+    
+        function init() {
+            for(let i = 0; i < 100; i++){
+                let x = Math.random()*innerWidth;
+                let y = Math.random()*innerHeight;
+                let r = Math.random()*3+1;
+                let dx = Math.random();
+                let dy = Math.random();
+                let bg = colors[Math.floor(Math.random()*colors.length)]
+                circles.push(new circle(x,y,r,dx,dy,bg))
+            }
+        }
+
+        function circle(x,y,r,dx,dy,bg) {
+            this.x = x;
+            this.y = y;
+            this.r = r
+            this.dx = dx
+            this.dy = dy
+            this.bg = bg
+            this.initR = r
+
+            this.draw = function() {
+                ctx.fillStyle = this.bg;
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 30;
+
+                ctx.beginPath();//?
+                //绘制圆形 arc(x,y,r,start,stop)
+                ctx.arc(this.x,this.y,this.r,0,Math.PI*0.5,false);//?
+                ctx.fill();
+            }
+            this.update = function (){
+                this.x += this.dx;
+                this.y += this.dy;
+                if(this.x-this.r<0 || this.x+this.r>innerWidth){
+                    this.dx = -this.dx
+                }
+                 if(this.y-this.r<0 || this.y+this.r>innerHeight){
+                    this.dy = -this.dy
+                }
+
+                if((this.x>mouse.x-50) && (this.x<mouse.x+50) && (this.y<mouse.y+50) && (this.y>mouse.y-50)){
+                    if(this.r < 40) {this.r += 1}
+                        
+                }else if(this.r > this.initR)
+                        {
+                            this.r -= 1;
+                        }
+                this.draw()
+            }
+            
+        }
+        init();
+        circles[1].draw()
+        function anim() {
+            ctx.clearRect(0,0,innerWidth,innerHeight);
+            for(let i = 0; i < circles.length; i++)
+            {
+                circles[i].update();
+            }
+        }
+        window.setInterval(anim,20)
+
+//文字跳动
+        let txtAnim = {
+    len: 0,
+    txtDom: '',
+    arrTxt: [],
+    init: function(obj) { //获取和清空字符串
+        this.obj = obj;
+        this.txtDom = obj.innerHTML.replace(/\s+/g, ""); //获取去掉空格后的字符串
+        this.len = this.txtDom.length;
+        obj.innerHTML = ''; //置空
+        this.addDom();
+    },
+    addDom: function() { //遍历字符串并切割
+        for(let i=0;i<this.len;i++){
+            let spanDom = document.createElement('span');
+            spanDom.innerHTML = this.txtDom.slice(i,i+1);
+            this.obj.appendChild(spanDom);
+            this.arrTxt.push(spanDom);
+        }
+        for(let i=0;i<this.len;i++){
+            this.arrTxt[i].style.position = 'relative';
+        }
+        this.start();
+    },
+    start: function() {
+        for(let i=0;i<this.len;i++){
+            this.arrTxt[i].onmouseover = function() {
+                this.stop = 0;
+                this.speed = -1;
+                let $this = this;
+                this.timer = setInterval(function() {
+                    $this.stop += $this.speed;
+                    if($this.stop<=-20) {
+                        $this.speed =1;
+                    }
+                    $this.style.top = $this.stop+'px';
+                    if($this.stop>=0){
+                        clearInterval($this.timer);
+                        $this.style.top = 0+'px';
+                    }
+                },15);
+            }
+        }
+    }
+};
+
+let txtDom = document.getElementById('Header1_HeaderTitle');
+txtAnim.init(txtDom);
+/*文字跳动结束*/
+    </script>
+</body>
+</html>
+
+例子
